@@ -14,7 +14,7 @@
     <header class="hero">
       <p class="eyebrow">Opulexis</p>
       <h1>ROI Calculator</h1>
-      <p class="lede">Estimate hours and dollars your team could reclaim. Adjust the inputs — results update instantly.</p>
+      <p class="lede">Estimate liberated capacity value from your assumptions, not cash savings. Adjust the inputs — results update instantly.</p>
     </header>
 
     <main class="layout">
@@ -29,64 +29,64 @@
 
         <label class="field">
           <span class="label-row"><span>Hours saved / user / week</span><output id="hours-out" for="hours">2</output></span>
-          <input id="hours" type="range" min="0.25" max="20" step="0.25" value="2">
-          <input id="hours-num" class="num" type="number" min="0.25" max="20" step="0.25" value="2" inputmode="decimal" aria-label="Hours saved exact value">
+          <input id="hours" type="range" min="0" max="20" step="0.25" value="2">
+          <input id="hours-num" class="num" type="number" min="0" max="20" step="0.25" value="2" inputmode="decimal" aria-label="Hours saved exact value">
         </label>
 
         <label class="field">
           <span class="label-row"><span>Hourly cost ($)</span><output id="cost-out" for="cost">75</output></span>
-          <input id="cost" type="range" min="15" max="300" step="1" value="75">
+          <input id="cost" type="range" min="1" max="1000" step="1" value="75">
           <input id="cost-num" class="num" type="number" min="1" max="1000" step="1" value="75" inputmode="decimal" aria-label="Hourly cost exact value">
         </label>
 
         <label class="field">
-          <span class="label-row"><span>Current tool spend / mo ($)</span><output id="spend-out" for="spend">0</output></span>
-          <input id="spend" type="range" min="0" max="5000" step="25" value="0">
-          <input id="spend-num" class="num" type="number" min="0" max="100000" step="1" value="0" inputmode="decimal" aria-label="Current tool spend exact value">
+          <span class="label-row"><span>Avoidable tool spend / mo ($)</span><output id="spend-out" for="spend">0</output></span>
+          <input id="spend" type="range" min="0" max="100000" step="1" value="0">
+          <input id="spend-num" class="num" type="number" min="0" max="100000" step="1" value="0" inputmode="decimal" aria-label="Avoidable tool spend exact value">
         </label>
 
         <label class="field">
           <span class="label-row"><span>Product price / mo ($)</span><output id="price-out" for="price">499</output></span>
-          <input id="price" type="range" min="0" max="5000" step="1" value="499">
+          <input id="price" type="range" min="0" max="100000" step="1" value="499">
           <input id="price-num" class="num" type="number" min="0" max="100000" step="1" value="499" inputmode="decimal" aria-label="Product price exact value">
         </label>
+
+        <label class="tool-option"><input id="include-tool-spend" type="checkbox"> Include avoidable tool spend in B (optional, non-duplicative)</label>
 
         <details class="howto">
           <summary>How we calculate</summary>
           <div class="howto-body">
-            <pre aria-label="Calculation formulas">weekly_hours = seats × hours_per_user_week
-monthly_hours = weekly_hours × 4.33
-monthly_labor = monthly_hours × hourly_cost
-monthly_net = monthly_labor + current_tool_spend − product_price
-payback_months = product_price ÷ max(monthly_net, 0.01)
-annual_net = monthly_net × 12</pre>
-            <p>If monthly net ≤ 0, payback shows “Not positive yet — adjust inputs” instead of a number.</p>
+            <pre aria-label="Calculation formulas">monthly_hours = seats × hours_per_user_week × 4.33
+liberated_capacity_value = monthly_hours × hourly_cost
+B = liberated_capacity_value + avoidable_tool_spend (only when included)
+P = monthly_subscription_fee
+monthly_estimated_net_value = B − P
+value_cost_ratio = B ÷ P</pre>
+            <p>Tool spend enters B only when the checkbox is checked; include only avoidable, non-duplicative spend. When P is $0, the ratio is unavailable. All results are assumption-based estimates of capacity value, not cash savings.</p>
           </div>
         </details>
       </section>
 
       <section class="panel results" aria-labelledby="results-title" aria-live="polite">
         <h2 id="results-title">Estimated impact</h2>
-        <div class="metrics">
+        <p class="lead-note">Assumption-based estimates of liberated capacity value, not cash savings.</p>
+        <p id="calc-error" class="error" role="alert" hidden></p>
+        <div id="calc-metrics" class="metrics">
           <article class="metric">
             <p class="metric-label">Monthly hours saved</p>
             <p class="metric-value" id="out-hours">—</p>
           </article>
           <article class="metric">
-            <p class="metric-label">Monthly labor value</p>
+            <p class="metric-label">Monthly liberated capacity value</p>
             <p class="metric-value" id="out-labor">—</p>
           </article>
           <article class="metric metric-accent">
-            <p class="metric-label">Monthly net</p>
+            <p class="metric-label">Monthly estimated net value</p>
             <p class="metric-value" id="out-net">—</p>
           </article>
           <article class="metric metric-accent">
-            <p class="metric-label">Annual net</p>
-            <p class="metric-value" id="out-annual">—</p>
-          </article>
-          <article class="metric metric-wide">
-            <p class="metric-label">Payback</p>
-            <p class="metric-value" id="out-payback">—</p>
+            <p class="metric-label">Value / cost ratio</p>
+            <p class="metric-value" id="out-ratio">—</p>
           </article>
         </div>
 
@@ -120,6 +120,7 @@ annual_net = monthly_net × 12</pre>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="./formula.js" defer></script>
   <script src="./app.js" defer></script>
   <script src="../motion.js" defer></script>
 </body>

@@ -1,28 +1,24 @@
 (() => {
-  const WEEKS_PER_MONTH = 4.33;
   const STORAGE_KEY = 'opulexis-roi-lead-v1';
 
   const $ = (id) => document.getElementById(id);
 
+  const { calculate, limits } = globalThis.OpulexisFormula;
   const fields = [
-    { range: 'seats', num: 'seats-num', out: 'seats-out', parse: (v) => clamp(Math.round(Number(v)), 1, 500), format: (v) => String(v) },
-    { range: 'hours', num: 'hours-num', out: 'hours-out', parse: (v) => clamp(Number(v), 0.25, 20), format: (v) => String(v) },
-    { range: 'cost', num: 'cost-num', out: 'cost-out', parse: (v) => clamp(Number(v), 1, 1000), format: (v) => String(v) },
-    { range: 'spend', num: 'spend-num', out: 'spend-out', parse: (v) => clamp(Number(v), 0, 100000), format: (v) => String(v) },
-    { range: 'price', num: 'price-num', out: 'price-out', parse: (v) => clamp(Number(v), 0, 100000), format: (v) => String(v) },
-  ];
-
-  function clamp(n, min, max) {
-    if (!Number.isFinite(n)) return min;
-    return Math.min(max, Math.max(min, n));
-  }
+    { range: 'seats', key: 'seats' },
+    { range: 'hours', key: 'hoursPerUserWeek' },
+    { range: 'cost', key: 'hourlyCost' },
+    { range: 'spend', key: 'toolSpend' },
+    { range: 'price', key: 'productPrice' },
+  ].map(field => ({ ...field, num: `${field.range}-num`, out: `${field.range}-out` }));
 
   function money(n) {
     const abs = Math.abs(n);
     const formatted = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      maximumFractionDigits: abs >= 100 ? 0 : 2,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(abs);
     return n < 0 ? `−${formatted}` : formatted;
   }
@@ -34,75 +30,40 @@
     }).format(n);
   }
 
-  function syncField(field, raw) {
-    const value = field.parse(raw);
-    const range = $(field.range);
+  function syncField(field, raw, fromRange = false) {
     const num = $(field.num);
-    const out = $(field.out);
-    const rangeMin = Number(range.min);
-    const rangeMax = Number(range.max);
-    range.value = String(clamp(value, rangeMin, rangeMax));
-    num.value = field.format(value);
-    out.textContent = field.format(value);
-    return value;
+    if (fromRange) num.value = raw;
+    const value = Number(raw);
+    const { min, max } = limits[field.key];
+    const valid = raw.trim() !== '' && Number.isFinite(value) && value >= min && value <= max && num.validity.valid;
+    num.setAttribute('aria-invalid', String(!valid));
+    if (valid) $(field.range).value = raw;
+    $(field.out).textContent = valid ? raw : '—';
   }
 
   function readInputs() {
-    return {
-      seats: fields[0].parse($('seats-num').value),
-      hoursPerUserWeek: fields[1].parse($('hours-num').value),
-      hourlyCost: fields[2].parse($('cost-num').value),
-      currentToolSpend: fields[3].parse($('spend-num').value),
-      productPrice: fields[4].parse($('price-num').value),
-    };
-  }
-
-  function calculate(input) {
-    const weeklyHours = input.seats * input.hoursPerUserWeek;
-    const monthlyHours = weeklyHours * WEEKS_PER_MONTH;
-    const monthlyLabor = monthlyHours * input.hourlyCost;
-    const monthlyNet = monthlyLabor + input.currentToolSpend - input.productPrice;
-    const annualNet = monthlyNet * 12;
-    const positive = monthlyNet > 0;
-    const paybackMonths = input.productPrice / Math.max(monthlyNet, 0.01);
-    return { weeklyHours, monthlyHours, monthlyLabor, monthlyNet, annualNet, positive, paybackMonths };
+    const input = { includeToolSpend: $('include-tool-spend').checked };
+    fields.forEach(field => { input[field.key] = $(field.num).value; });
+    return input;
   }
 
   function render() {
-    const t0 = performance.now();
-    const input = readInputs();
-    const result = calculate(input);
-
-    $('out-hours').textContent = hoursFmt(result.monthlyHours);
-    $('out-labor').textContent = money(result.monthlyLabor);
-
-    const netEl = $('out-net');
-    const annualEl = $('out-annual');
-    const payEl = $('out-payback');
-    netEl.textContent = money(result.monthlyNet);
-    annualEl.textContent = money(result.annualNet);
-    netEl.classList.toggle('is-warn', !result.positive);
-    annualEl.classList.toggle('is-warn', !result.positive);
-
-    if (!result.positive) {
-      payEl.textContent = 'Not positive yet — adjust inputs';
-      payEl.classList.add('is-warn');
+    const result = calculate(readInputs());
+    $('calc-error').hidden = result.valid;
+    $('calc-error').textContent = result.valid ? '' : result.error;
+    $('calc-metrics').hidden = !result.valid;
+    if (result.valid) {
+      $('out-hours').textContent = hoursFmt(result.monthlyHours);
+      $('out-labor').textContent = money(result.monthlyLabor);
+      $('out-net').textContent = money(result.net);
+      $('out-ratio').textContent = result.ratioLabel;
     } else {
-      const months = result.paybackMonths;
-      payEl.textContent = months < 1
-        ? (() => { const d = Math.max(1, Math.round(months * 30)); return `${d} day${d===1?'':'s'}`; })()
-        : `${months.toFixed(months < 10 ? 1 : 0)} months`;
-      payEl.classList.remove('is-warn');
+      ['out-hours', 'out-labor', 'out-net', 'out-ratio'].forEach(id => { $(id).textContent = '—'; });
     }
-
     const gated = Boolean(localStorage.getItem(STORAGE_KEY));
     $('lead-gate').hidden = gated;
     $('lead-success').hidden = !gated;
-
     document.dispatchEvent(new Event('calculator:updated'));
-
-    const elapsed = performance.now() - t0;
-    if (elapsed > 100) console.warn(`ROI recalculate took ${elapsed.toFixed(1)}ms`);
   }
 
   function showToast(message) {
@@ -120,7 +81,7 @@
 
   fields.forEach((field) => {
     $(field.range).addEventListener('input', (event) => {
-      syncField(field, event.target.value);
+      syncField(field, event.target.value, true);
       render();
     });
     $(field.num).addEventListener('input', (event) => {
@@ -132,6 +93,8 @@
       render();
     });
   });
+
+  $('include-tool-spend').addEventListener('change', render);
 
   $('lead-form').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -153,6 +116,11 @@
     }
 
     const scenario = readInputs();
+    if (!calculate(scenario).valid) {
+      error.textContent = 'Correct the scenario inputs before saving.';
+      error.hidden = false;
+      return;
+    }
     const payload = {
       email,
       company,

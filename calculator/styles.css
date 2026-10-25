@@ -3,3 +3,5 @@
 @media(min-width:800px){.layout{grid-template-columns:1fr 1fr;align-items:start}}
 @media(max-width:480px){.shell{padding:36px 16px 24px}.hero{margin-bottom:32px}.lede{font-size:16px}.panel{padding:24px 20px}.layout{gap:20px}.field{grid-template-columns:minmax(0,1fr) 72px}.label-row{font-size:12px}.metric-value{font-size:25px}.metric-accent .metric-value{font-size:40px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.tool-option{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted)}.tool-option input{accent-color:var(--accent);margin-top:4px}#calc-error{margin-bottom:24px}

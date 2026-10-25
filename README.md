@@ -2,6 +2,10 @@
 
 Pure static marketing site with an embedded ROI calculator. No dependencies or build step.
 
+## Source
+
+- GitHub: https://github.com/kingsmangithub/opulexis-calculators
+
 ## Production
 
 - Custom domain: https://calculators.opulexis.com/
@@ -33,7 +37,7 @@ Visit <http://localhost:8000/> for the landing page and <http://localhost:8000/c
 ## Paths
 
 - `/` — English marketing landing page (`index.html` and `landing.css`).
-- `/calculator/` — existing calculator (`index.html`, `styles.css`, and `app.js`). Its math and formulas are unchanged.
+- `/calculator/` — calculator (`index.html`, `styles.css`, `formula.js`, and `app.js`) with assumption-based net value and value / cost ratio. Run `node calculator/acceptance.test.js` to verify its formulas and input bounds.
 
 Deploy this directory as the static site root. No install or build command is needed.
 

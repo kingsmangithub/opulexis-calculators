@@ -1,0 +1,52 @@
+/* Quiet, shared motion. Content is visible until the observer is ready. */
+a:focus-visible, input:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 3px solid #0071e3;
+  outline-offset: 4px;
+}
+.button, .primary {
+  transition: background-color 180ms ease, opacity 180ms ease, transform 160ms ease;
+}
+.button:active, .primary:active { transform: scale(.98); }
+.price-card, .panel {
+  transition: transform 240ms ease, box-shadow 240ms ease;
+}
+.num, #lead-form input {
+  transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+.num:focus, #lead-form input:focus { border-color: #0071e3; }
+.footer a, .lead-success a { color: var(--accent); text-underline-offset: 3px; }
+.footer p + p { margin-top: 8px; }
+@media (hover: hover) and (pointer: fine) {
+  .button:hover, .primary:hover { opacity: .94; }
+  .price-card:hover, .panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px -12px #0000001f;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-pending { opacity: 0; translate: 0 12px; }
+  .reveal-ready { transition: opacity 550ms ease, translate 550ms cubic-bezier(.2,.65,.3,1); }
+  .metric-value.is-updating { animation: metric-update 220ms ease-out; }
+  input[type=range]::-webkit-slider-thumb {
+    transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+  input[type=range]::-moz-range-thumb {
+    transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+  input[type=range]::-webkit-slider-runnable-track { transition: background-color 180ms ease; }
+  input[type=range]::-moz-range-track { transition: background-color 180ms ease; }
+  input[type=range]:hover::-webkit-slider-thumb,
+  input[type=range]:active::-webkit-slider-thumb { border-color: #0071e3; box-shadow: 0 0 0 4px #0071e314; }
+  input[type=range]:hover::-moz-range-thumb,
+  input[type=range]:active::-moz-range-thumb { border-color: #0071e3; box-shadow: 0 0 0 4px #0071e314; }
+  @keyframes metric-update {
+    from { opacity: .65; transform: translateY(2px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal-pending { opacity: 1; translate: none; }
+  .price-card:hover, .panel:hover, .button:active, .primary:active { transform: none; }
+}

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f5f5f7">
+  <title>ROI Calculator · Opulexis</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="../motion.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="hero">
+      <p class="eyebrow">Opulexis</p>
+      <h1>ROI Calculator</h1>
+      <p class="lede">Estimate hours and dollars your team could reclaim. Adjust the inputs — results update instantly.</p>
+    </header>
+
+    <main class="layout">
+      <section class="panel inputs" aria-labelledby="inputs-title">
+        <h2 id="inputs-title">Your scenario</h2>
+
+        <label class="field">
+          <span class="label-row"><span>Seats</span><output id="seats-out" for="seats">25</output></span>
+          <input id="seats" type="range" min="1" max="500" step="1" value="25">
+          <input id="seats-num" class="num" type="number" min="1" max="500" step="1" value="25" inputmode="numeric" aria-label="Seats exact value">
+        </label>
+
+        <label class="field">
+          <span class="label-row"><span>Hours saved / user / week</span><output id="hours-out" for="hours">2</output></span>
+          <input id="hours" type="range" min="0.25" max="20" step="0.25" value="2">
+          <input id="hours-num" class="num" type="number" min="0.25" max="20" step="0.25" value="2" inputmode="decimal" aria-label="Hours saved exact value">
+        </label>
+
+        <label class="field">
+          <span class="label-row"><span>Hourly cost ($)</span><output id="cost-out" for="cost">75</output></span>
+          <input id="cost" type="range" min="15" max="300" step="1" value="75">
+          <input id="cost-num" class="num" type="number" min="1" max="1000" step="1" value="75" inputmode="decimal" aria-label="Hourly cost exact value">
+        </label>
+
+        <label class="field">
+          <span class="label-row"><span>Current tool spend / mo ($)</span><output id="spend-out" for="spend">0</output></span>
+          <input id="spend" type="range" min="0" max="5000" step="25" value="0">
+          <input id="spend-num" class="num" type="number" min="0" max="100000" step="1" value="0" inputmode="decimal" aria-label="Current tool spend exact value">
+        </label>
+
+        <label class="field">
+          <span class="label-row"><span>Product price / mo ($)</span><output id="price-out" for="price">499</output></span>
+          <input id="price" type="range" min="0" max="5000" step="1" value="499">
+          <input id="price-num" class="num" type="number" min="0" max="100000" step="1" value="499" inputmode="decimal" aria-label="Product price exact value">
+        </label>
+
+        <details class="howto">
+          <summary>How we calculate</summary>
+          <div class="howto-body">
+            <pre aria-label="Calculation formulas">weekly_hours = seats × hours_per_user_week
+monthly_hours = weekly_hours × 4.33
+monthly_labor = monthly_hours × hourly_cost
+monthly_net = monthly_labor + current_tool_spend − product_price
+payback_months = product_price ÷ max(monthly_net, 0.01)
+annual_net = monthly_net × 12</pre>
+            <p>If monthly net ≤ 0, payback shows “Not positive yet — adjust inputs” instead of a number.</p>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel results" aria-labelledby="results-title" aria-live="polite">
+        <h2 id="results-title">Estimated impact</h2>
+        <div class="metrics">
+          <article class="metric">
+            <p class="metric-label">Monthly hours saved</p>
+            <p class="metric-value" id="out-hours">—</p>
+          </article>
+          <article class="metric">
+            <p class="metric-label">Monthly labor value</p>
+            <p class="metric-value" id="out-labor">—</p>
+          </article>
+          <article class="metric metric-accent">
+            <p class="metric-label">Monthly net</p>
+            <p class="metric-value" id="out-net">—</p>
+          </article>
+          <article class="metric metric-accent">
+            <p class="metric-label">Annual net</p>
+            <p class="metric-value" id="out-annual">—</p>
+          </article>
+          <article class="metric metric-wide">
+            <p class="metric-label">Payback</p>
+            <p class="metric-value" id="out-payback">—</p>
+          </article>
+        </div>
+
+        <div id="lead-gate" class="lead-gate" hidden>
+          <h3>Get this scenario emailed to your team</h3>
+          <p class="lead-note">Demo only — nothing is sent. We’ll store your details locally in this browser.</p>
+          <form id="lead-form" novalidate>
+            <label>
+              Work email
+              <input id="lead-email" name="email" type="email" autocomplete="email" required placeholder="you@company.com">
+            </label>
+            <label>
+              Company
+              <input id="lead-company" name="company" type="text" autocomplete="organization" required placeholder="Acme Inc.">
+            </label>
+            <button type="submit" class="primary">Unlock full summary</button>
+            <p id="lead-error" class="error" role="alert" hidden></p>
+          </form>
+        </div>
+
+        <div id="lead-success" class="lead-success" hidden>
+          <p><strong>Saved locally.</strong> This is a demo gate: your details and scenario are saved only in this browser, and no email was sent. Questions? <a href="mailto:hello@opulexis.com">hello@opulexis.com</a>.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Demo embed · Opulexis Calculator Service</p>
+      <p>Questions? <a href="mailto:hello@opulexis.com">hello@opulexis.com</a></p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="./app.js" defer></script>
+  <script src="../motion.js" defer></script>
+</body>
+</html>

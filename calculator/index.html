@@ -21,35 +21,35 @@
       <section class="panel inputs" aria-labelledby="inputs-title">
         <h2 id="inputs-title">Your scenario</h2>
 
-        <label class="field">
-          <span class="label-row"><span>Seats</span><output id="seats-out" for="seats">25</output></span>
-          <input id="seats" type="range" min="1" max="500" step="1" value="25">
-          <input id="seats-num" class="num" type="number" min="1" max="500" step="1" value="25" inputmode="numeric" aria-label="Seats exact value">
-        </label>
+        <div class="field">
+          <span class="label-row"><label for="seats" id="seats-label">Seats</label><output id="seats-out" for="seats">25</output></span>
+          <input id="seats" type="range" min="1" max="500" step="1" value="25" aria-labelledby="seats-label">
+          <input id="seats-num" class="num" type="number" min="1" max="500" step="1" value="25" inputmode="numeric" aria-labelledby="seats-label">
+        </div>
 
-        <label class="field">
-          <span class="label-row"><span>Hours saved / user / week</span><output id="hours-out" for="hours">2</output></span>
-          <input id="hours" type="range" min="0" max="20" step="0.25" value="2">
-          <input id="hours-num" class="num" type="number" min="0" max="20" step="0.25" value="2" inputmode="decimal" aria-label="Hours saved exact value">
-        </label>
+        <div class="field">
+          <span class="label-row"><label for="hours" id="hours-label">Hours saved / user / week</label><output id="hours-out" for="hours">2</output></span>
+          <input id="hours" type="range" min="0" max="20" step="0.25" value="2" aria-labelledby="hours-label">
+          <input id="hours-num" class="num" type="number" min="0" max="20" step="0.25" value="2" inputmode="decimal" aria-labelledby="hours-label">
+        </div>
 
-        <label class="field">
-          <span class="label-row"><span>Hourly cost ($)</span><output id="cost-out" for="cost">75</output></span>
-          <input id="cost" type="range" min="1" max="1000" step="1" value="75">
-          <input id="cost-num" class="num" type="number" min="1" max="1000" step="1" value="75" inputmode="decimal" aria-label="Hourly cost exact value">
-        </label>
+        <div class="field">
+          <span class="label-row"><label for="cost" id="cost-label">Hourly cost ($)</label><output id="cost-out" for="cost">75</output></span>
+          <input id="cost" type="range" min="1" max="1000" step="1" value="75" aria-labelledby="cost-label">
+          <input id="cost-num" class="num" type="number" min="1" max="1000" step="1" value="75" inputmode="decimal" aria-labelledby="cost-label">
+        </div>
 
-        <label class="field">
-          <span class="label-row"><span>Avoidable tool spend / mo ($)</span><output id="spend-out" for="spend">0</output></span>
-          <input id="spend" type="range" min="0" max="100000" step="1" value="0">
-          <input id="spend-num" class="num" type="number" min="0" max="100000" step="1" value="0" inputmode="decimal" aria-label="Avoidable tool spend exact value">
-        </label>
+        <div class="field">
+          <span class="label-row"><label for="spend" id="spend-label">Avoidable tool spend / mo ($)</label><output id="spend-out" for="spend">0</output></span>
+          <input id="spend" type="range" min="0" max="100000" step="1" value="0" aria-labelledby="spend-label">
+          <input id="spend-num" class="num" type="number" min="0" max="100000" step="1" value="0" inputmode="decimal" aria-labelledby="spend-label">
+        </div>
 
-        <label class="field">
-          <span class="label-row"><span>Product price / mo ($)</span><output id="price-out" for="price">499</output></span>
-          <input id="price" type="range" min="0" max="100000" step="1" value="499">
-          <input id="price-num" class="num" type="number" min="0" max="100000" step="1" value="499" inputmode="decimal" aria-label="Product price exact value">
-        </label>
+        <div class="field">
+          <span class="label-row"><label for="price" id="price-label">Product price / mo ($)</label><output id="price-out" for="price">499</output></span>
+          <input id="price" type="range" min="0" max="100000" step="1" value="499" aria-labelledby="price-label">
+          <input id="price-num" class="num" type="number" min="0" max="100000" step="1" value="499" inputmode="decimal" aria-labelledby="price-label">
+        </div>
 
         <label class="tool-option"><input id="include-tool-spend" type="checkbox"> Include avoidable tool spend in B (optional, non-duplicative)</label>
 
@@ -90,26 +90,6 @@ value_cost_ratio = B ÷ P</pre>
           </article>
         </div>
 
-        <div id="lead-gate" class="lead-gate" hidden>
-          <h3>Get this scenario emailed to your team</h3>
-          <p class="lead-note">Demo only — nothing is sent. We’ll store your details locally in this browser.</p>
-          <form id="lead-form" novalidate>
-            <label>
-              Work email
-              <input id="lead-email" name="email" type="email" autocomplete="email" required placeholder="you@company.com">
-            </label>
-            <label>
-              Company
-              <input id="lead-company" name="company" type="text" autocomplete="organization" required placeholder="Acme Inc.">
-            </label>
-            <button type="submit" class="primary">Unlock full summary</button>
-            <p id="lead-error" class="error" role="alert" hidden></p>
-          </form>
-        </div>
-
-        <div id="lead-success" class="lead-success" hidden>
-          <p><strong>Saved locally.</strong> This is a demo gate: your details and scenario are saved only in this browser, and no email was sent. Questions? <a href="mailto:hello@opulexis.com">hello@opulexis.com</a>.</p>
-        </div>
       </section>
     </main>
 
@@ -119,7 +99,6 @@ value_cost_ratio = B ÷ P</pre>
     </footer>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   <script src="./formula.js" defer></script>
   <script src="./app.js" defer></script>
   <script src="../motion.js" defer></script>

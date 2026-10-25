@@ -26,7 +26,7 @@
       const value = raw[key];
       const number = typeof value === 'number' || (typeof value === 'string' && value.trim() !== '') ? Number(value) : NaN;
       if (!Number.isFinite(number) || number < min || number > max || Math.abs((number - min) / step - Math.round((number - min) / step)) > 1e-8) {
-        return { valid: false, error: `Enter a valid ${key} value from ${min} to ${max} in steps of ${step}.` };
+        return { valid: false, error: `Enter a valid ${({ seats: "Seats", hoursPerUserWeek: "Hours saved / user / week", hourlyCost: "Hourly cost ($)", toolSpend: "Avoidable tool spend / mo ($)", productPrice: "Product price / mo ($)" })[key]} value from ${min} to ${max} in steps of ${step}.` };
       }
       input[key] = number;
     }

@@ -1,6 +1,4 @@
 (() => {
-  const STORAGE_KEY = 'opulexis-roi-lead-v1';
-
   const $ = (id) => document.getElementById(id);
 
   const { calculate, limits } = globalThis.OpulexisFormula;
@@ -60,23 +58,7 @@
     } else {
       ['out-hours', 'out-labor', 'out-net', 'out-ratio'].forEach(id => { $(id).textContent = '—'; });
     }
-    const gated = Boolean(localStorage.getItem(STORAGE_KEY));
-    $('lead-gate').hidden = gated;
-    $('lead-success').hidden = !gated;
     document.dispatchEvent(new Event('calculator:updated'));
-  }
-
-  function showToast(message) {
-    const toast = $('toast');
-    toast.textContent = message;
-    toast.hidden = false;
-    clearTimeout(showToast._timer);
-    showToast._timer = setTimeout(() => { toast.hidden = true; }, 2800);
-  }
-
-  function isWorkEmail(email) {
-    const trimmed = String(email || '').trim();
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
   }
 
   fields.forEach((field) => {
@@ -95,43 +77,6 @@
   });
 
   $('include-tool-spend').addEventListener('change', render);
-
-  $('lead-form').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const email = $('lead-email').value.trim();
-    const company = $('lead-company').value.trim();
-    const error = $('lead-error');
-    error.hidden = true;
-    error.textContent = '';
-
-    if (!isWorkEmail(email)) {
-      error.textContent = 'Enter a valid work email.';
-      error.hidden = false;
-      return;
-    }
-    if (!company) {
-      error.textContent = 'Company is required.';
-      error.hidden = false;
-      return;
-    }
-
-    const scenario = readInputs();
-    if (!calculate(scenario).valid) {
-      error.textContent = 'Correct the scenario inputs before saving.';
-      error.hidden = false;
-      return;
-    }
-    const payload = {
-      email,
-      company,
-      savedAt: new Date().toISOString(),
-      scenario,
-      result: calculate(scenario),
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    render();
-    showToast('Lead saved locally · no email sent');
-  });
 
   // Sync outputs from defaults, then paint results
   fields.forEach((field) => syncField(field, $(field.num).value));

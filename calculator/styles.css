@@ -7,3 +7,4 @@
 .tool-option{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted)}.tool-option input{accent-color:var(--accent);margin-top:4px}#calc-error{margin-bottom:24px}
 
 .calc-brand-mark{display:inline-block;vertical-align:-3px;margin-right:6px;height:18px;width:18px}
+#out-labor{white-space:nowrap;font-size:min(clamp(24px,2.5vw,32px),5.6vw)}

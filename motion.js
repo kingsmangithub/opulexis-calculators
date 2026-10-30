@@ -18,7 +18,7 @@
         target.classList.remove('reveal-pending');
         observer.unobserve(target);
       });
-    }, { threshold: 0, rootMargin: '0px 0px -24px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px 64px 0px' });
     targets.forEach((element) => {
       element.classList.add('reveal-ready', 'reveal-pending');
       observer.observe(element);
